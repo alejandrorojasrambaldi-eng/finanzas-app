@@ -7,8 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Control de Finanzas</title>
-<link rel="manifest" href="manifest.json">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="manifest" href="manifest.json?v=2">
+<script>window._chartLoaded=false;</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4" onload="window._chartLoaded=true" onerror="console.warn('Chart.js no cargÃ³')"></script>
 <style>
 :root {
   --bg: #0f172a;
@@ -394,19 +395,21 @@ function showDialog(msg, confirmText, cancelText) {
 }
 
 function init() {
-  loadState();
-  const now = new Date();
-  state.currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  render();
-  updateMonthLabel();
-  document.getElementById('filterMonth').value = state.currentMonth;
-  document.getElementById('filterMonth').addEventListener('change', () => renderTransactions());
-  document.getElementById('filterType').addEventListener('change', () => renderTransactions());
-  document.getElementById('filterCategory').addEventListener('change', () => renderTransactions());
-  document.getElementById('filterSearch').addEventListener('input', () => renderTransactions());
-  document.getElementById('importFile').addEventListener('change', importData);
+  try {
+    loadState();
+    const now = new Date();
+    state.currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    render();
+    updateMonthLabel();
+    document.getElementById('filterMonth').value = state.currentMonth;
+    document.getElementById('filterMonth').addEventListener('change', () => renderTransactions());
+    document.getElementById('filterType').addEventListener('change', () => renderTransactions());
+    document.getElementById('filterCategory').addEventListener('change', () => renderTransactions());
+    document.getElementById('filterSearch').addEventListener('input', () => renderTransactions());
+    document.getElementById('importFile').addEventListener('change', importData);
+  } catch(e) { console.error('Error init:', e); }
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js?v=2').catch(() => {});
   }
 }
 
@@ -760,6 +763,7 @@ function renderDailyChart(tx) {
   const ctx = canvas.getContext('2d');
   if (chartDaily) { chartDaily.destroy(); chartDaily = null; }
   if (tx.length === 0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+  if (typeof Chart === 'undefined') { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
 
   const daily = {};
   tx.forEach(t => {
@@ -797,6 +801,7 @@ function renderCategoryChart(expenses) {
   const canvas = document.getElementById('chartCategory');
   const ctx = canvas.getContext('2d');
   if (chartCategory) { chartCategory.destroy(); chartCategory = null; }
+  if (typeof Chart === 'undefined') { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
   if (expenses.length === 0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
   const grouped = {};
   expenses.forEach(t => { grouped[t.category] = (grouped[t.category]||0) + t.amount; });
