@@ -1,4 +1,4 @@
-const CACHE = 'finanzas-v1';
+const CACHE = 'finanzas-v2';
 const ASSETS = [
   '.',
   'index.html',
@@ -7,7 +7,7 @@ const ASSETS = [
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS).catch(() => {}))
   );
   self.skipWaiting();
 });
