@@ -28,7 +28,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg); color: var(--text); min-height: 100dvh;
-  padding-bottom: 80px; overflow-x: hidden;
+  padding-bottom: 80px; overflow-x: hidden; touch-action: manipulation;
 }
 .hidden { display: none !important; }
 /* Scrollbar */
@@ -118,16 +118,17 @@ header .month-selector span { font-size: 14px; font-weight: 600; min-width: 100p
 nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: var(--surface); border-top: 1px solid var(--border);
-  display: flex; justify-content: space-around; padding: 6px 0 env(safe-area-inset-bottom, 6px) 0;
-  z-index: 100;
+  display: flex; justify-content: space-around; padding: 4px 0 12px 0;
+  z-index: 1000;
 }
 nav button {
-  background: none; border: none; color: var(--text2); cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 12px; font-size: 10px; transition: color .2s;
+  background: none; border: none; color: var(--text2); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 8px 4px; font-size: 11px; min-width: 60px; min-height: 54px;
+  transition: color .2s; flex: 1;
 }
 nav button.active { color: var(--primary); }
-nav button .nav-icon { font-size: 22px; line-height: 1; }
+nav button .nav-icon { font-size: 24px; line-height: 1; }
 
 /* FAB for add */
 .fab {
@@ -420,14 +421,18 @@ function nextMonth() {
 // ===== NAVIGATION =====
 function navigate(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const navBtns = document.querySelectorAll('nav button');
   const idx = { pageDashboard:0, pageTransactions:1, pageBudgets:2, pageSettings:3 }[pageId];
-  if (idx !== undefined) document.querySelectorAll('nav button')[idx].classList.add('active');
-  if (pageId === 'pageTransactions') renderTransactions();
-  if (pageId === 'pageBudgets') renderBudgets();
-  if (pageId === 'pageSettings') renderSettings();
-  if (pageId === 'pageDashboard') renderDashboard();
+  if (idx !== undefined && navBtns[idx]) navBtns[idx].classList.add('active');
+  try {
+    if (pageId === 'pageTransactions') renderTransactions();
+    else if (pageId === 'pageBudgets') renderBudgets();
+    else if (pageId === 'pageSettings') renderSettings();
+    else if (pageId === 'pageDashboard') renderDashboard();
+  } catch(e) { console.error(e); }
 }
 
 // ===== MODAL =====
