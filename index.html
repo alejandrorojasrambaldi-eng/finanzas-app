@@ -20,6 +20,7 @@
   --expense: #ef4444;
   --text: #f1f5f9;
   --text2: #94a3b8;
+  --text3: #64748b;
   --border: #334155;
   --radius: 12px;
   --shadow: 0 4px 24px rgba(0,0,0,.3);
@@ -31,11 +32,10 @@ body {
   padding-bottom: 80px; overflow-x: hidden; touch-action: manipulation;
 }
 .hidden { display: none !important; }
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+::selection { background: var(--primary); color: white; }
 
-/* Header */
 header {
   position: sticky; top: 0; z-index: 10;
   background: var(--bg); padding: 16px 20px 12px;
@@ -43,28 +43,27 @@ header {
   display: flex; justify-content: space-between; align-items: center;
 }
 header h1 { font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
-header .month-selector {
-  display: flex; align-items: center; gap: 8px;
-}
+header .month-selector { display: flex; align-items: center; gap: 8px; }
 header .month-selector button {
   background: var(--surface); border: 1px solid var(--border); color: var(--text);
   width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
 header .month-selector span { font-size: 14px; font-weight: 600; min-width: 100px; text-align: center; }
+header .header-balance {
+  font-size: 12px; color: var(--text2); text-align: right;
+}
 
-/* Pages */
-.page { display: none; padding: 16px 20px; }
+.page { display: none; padding: 16px 20px; animation: fadeIn .2s ease; }
 .page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Cards */
 .card {
   background: var(--surface); border-radius: var(--radius); padding: 16px;
   margin-bottom: 16px; box-shadow: var(--shadow);
 }
 .card-title { font-size: 13px; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
 
-/* Balance */
 .balance-large { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
 .balance-row { display: flex; gap: 16px; margin-top: 12px; }
 .balance-row > div { flex: 1; padding: 12px; border-radius: 8px; }
@@ -75,10 +74,14 @@ header .month-selector span { font-size: 14px; font-weight: 600; min-width: 100p
 .balance-row .amount.income { color: var(--income); }
 .balance-row .amount.expense { color: var(--expense); }
 
-/* Chart container */
-.chart-container { height: 220px; margin: 8px 0 0; }
+.stat-row { display: flex; gap: 12px; margin-top: 8px; }
+.stat-row > div { flex: 1; text-align: center; padding: 8px; background: var(--surface2); border-radius: 8px; }
+.stat-row .stat-value { font-size: 16px; font-weight: 700; }
+.stat-row .stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
 
-/* Transactions list */
+.chart-container { height: 220px; margin: 8px 0 0; }
+.chart-sm { height: 160px; margin: 8px 0 0; }
+
 .transaction-item {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 0; border-bottom: 1px solid var(--border);
@@ -94,19 +97,18 @@ header .month-selector span { font-size: 14px; font-weight: 600; min-width: 100p
 .transaction-info { flex: 1; min-width: 0; }
 .transaction-info .cat { font-size: 14px; font-weight: 600; }
 .transaction-info .desc { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.transaction-info .date { font-size: 11px; color: var(--text2); margin-top: 2px; }
-.transaction-amount { font-size: 15px; font-weight: 700; text-align: right; }
+.transaction-info .date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.transaction-amount { font-size: 15px; font-weight: 700; text-align: right; white-space: nowrap; }
 .transaction-amount.income { color: var(--income); }
 .transaction-amount.expense { color: var(--expense); }
-.transaction-actions { display: flex; gap: 4px; margin-left: 8px; }
+.transaction-actions { display: flex; gap: 4px; margin-left: 4px; }
 .transaction-actions button {
-  background: none; border: none; color: var(--text2); cursor: pointer;
-  width: 28px; height: 28px; border-radius: 6px; font-size: 14px;
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  width: 32px; height: 32px; border-radius: 6px; font-size: 14px;
   display: flex; align-items: center; justify-content: center;
 }
-.transaction-actions button:hover { background: var(--surface2); }
+.transaction-actions button:active { background: var(--surface2); }
 
-/* Filters */
 .filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
 .filters select, .filters input {
   background: var(--surface2); border: 1px solid var(--border); color: var(--text);
@@ -114,7 +116,6 @@ header .month-selector span { font-size: 14px; font-weight: 600; min-width: 100p
 }
 .filters select { appearance: auto; }
 
-/* Bottom nav */
 nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: var(--surface); border-top: 1px solid var(--border);
@@ -130,53 +131,53 @@ nav button {
 nav button.active { color: var(--primary); }
 nav button .nav-icon { font-size: 24px; line-height: 1; }
 
-/* FAB for add */
 .fab {
   position: fixed; bottom: 80px; right: 20px;
   width: 56px; height: 56px; border-radius: 50%;
   background: var(--primary); color: white; border: none;
   font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(59,130,246,.4);
   display: flex; align-items: center; justify-content: center;
-  z-index: 50; transition: transform .2s;
+  z-index: 50; transition: transform .15s;
 }
 .fab:active { transform: scale(.9); }
 
-/* Modal */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.6);
   z-index: 200; display: none; align-items: flex-end; justify-content: center;
 }
 .modal-overlay.open { display: flex; }
+.modal-overlay.dialog { align-items: center; }
+.modal-overlay.dialog .modal-content {
+  border-radius: 20px; max-width: 360px; padding: 24px; animation: dialogIn .2s ease;
+}
+@keyframes dialogIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .modal-content {
   background: var(--surface); border-radius: 20px 20px 0 0;
   width: 100%; max-width: 500px; max-height: 90dvh; overflow-y: auto;
-  padding: 24px 20px env(safe-area-inset-bottom, 20px);
-  animation: slideUp .3s ease;
+  padding: 24px 20px 20px; animation: slideUp .3s ease;
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
 }
 .modal-header h2 { font-size: 20px; }
 .modal-close {
   background: none; border: none; color: var(--text2); font-size: 24px; cursor: pointer;
   width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
 }
-.modal-close:hover { background: var(--surface2); }
+.modal-close:active { background: var(--surface2); }
+.dialog-msg { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 20px; line-height: 1.5; }
+.dialog-btns { display: flex; gap: 12px; }
+.dialog-btns .btn { flex: 1; }
 
-/* Forms */
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
 .form-group input, .form-group select, .form-group textarea {
   width: 100%; padding: 12px 14px; border-radius: 10px;
   background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); font-size: 15px; outline: none;
-  transition: border-color .2s;
+  color: var(--text); font-size: 15px; outline: none; transition: border-color .2s;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: var(--primary);
-}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
 .form-group textarea { resize: vertical; min-height: 60px; font-family: inherit; }
 .form-group .type-toggle {
   display: flex; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
@@ -191,25 +192,27 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
 
 .btn {
   width: 100%; padding: 14px; border: none; border-radius: 10px;
-  font-size: 16px; font-weight: 600; cursor: pointer;
-  transition: opacity .2s; color: white;
+  font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity .2s; color: white;
 }
 .btn:active { opacity: .8; }
 .btn-primary { background: var(--primary); }
+.btn-secondary { background: var(--surface2); color: var(--text); }
 .btn-danger { background: var(--expense); }
 
-/* Categories & Budgets */
 .category-item, .budget-item {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 0; border-bottom: 1px solid var(--border);
 }
 .category-item:last-child, .budget-item:last-child { border-bottom: none; }
 .category-name { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.category-actions { display: flex; gap: 4px; }
 .category-actions button {
-  background: none; border: none; color: var(--text2); cursor: pointer;
-  width: 28px; height: 28px; border-radius: 6px; font-size: 14px;
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  width: 32px; height: 32px; border-radius: 6px; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
 }
-.category-actions button:hover { background: var(--surface2); }
+.category-actions button:active { background: var(--surface2); }
+
 .budget-progress { margin-top: 8px; }
 .budget-progress .bar {
   height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-top: 4px;
@@ -218,9 +221,8 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
 .budget-progress .bar-fill.ok { background: var(--income); }
 .budget-progress .bar-fill.warn { background: #f59e0b; }
 .budget-progress .bar-fill.over { background: var(--expense); }
-.budget-info { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.budget-info { font-size: 12px; color: var(--text3); margin-top: 4px; }
 
-/* Settings */
 .settings-section { margin-bottom: 24px; }
 .settings-section h3 { font-size: 14px; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .5px; }
 .setting-row {
@@ -228,12 +230,17 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
   padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px;
 }
 
-/* Empty state */
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text2); }
 .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
 .empty-state p { font-size: 14px; }
 
-/* Responsive tweaks */
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+}
+.tag.income { background: rgba(34,197,94,.15); color: var(--income); }
+.tag.expense { background: rgba(239,68,68,.15); color: var(--expense); }
+
 @media (min-width: 600px) {
   body { max-width: 480px; margin: 0 auto; }
   nav { max-width: 480px; left: 50%; transform: translateX(-50%); }
@@ -244,7 +251,10 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
 <body>
 
 <header>
-  <h1>Finanzas</h1>
+  <div>
+    <h1>Finanzas</h1>
+    <div class="header-balance" id="headerBalance"></div>
+  </div>
   <div class="month-selector">
     <button onclick="prevMonth()">&#8249;</button>
     <span id="monthLabel"></span>
@@ -252,7 +262,6 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
   </div>
 </header>
 
-<!-- DASHBOARD -->
 <div id="pageDashboard" class="page active">
   <div class="card">
     <div class="card-title">Balance neto</div>
@@ -261,6 +270,15 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
       <div class="inc"><div class="label">Ingresos</div><div class="amount income" id="totalIncome">$0</div></div>
       <div class="exp"><div class="label">Gastos</div><div class="amount expense" id="totalExpense">$0</div></div>
     </div>
+    <div class="stat-row">
+      <div><div class="stat-value" id="avgDaily">$0</div><div class="stat-label">Gasto diario prom.</div></div>
+      <div><div class="stat-value" id="txCount">0</div><div class="stat-label">Movimientos</div></div>
+      <div><div class="stat-value" id="biggestExp">$0</div><div class="stat-label">Mayor gasto</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Ingresos vs Gastos</div>
+    <div class="chart-sm"><canvas id="chartDaily"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Gastos por categorÃ­a</div>
@@ -272,28 +290,28 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
   </div>
 </div>
 
-<!-- TRANSACTIONS -->
 <div id="pageTransactions" class="page">
   <div class="filters">
     <select id="filterType"><option value="all">Todos</option><option value="income">Ingresos</option><option value="expense">Gastos</option></select>
     <select id="filterCategory"><option value="all">CategorÃ­a</option></select>
-    <input type="month" id="filterMonth">
+  </div>
+  <div class="filters">
+    <input type="text" id="filterSearch" placeholder="Buscar por descripciÃ³n..." style="flex:2">
+    <input type="month" id="filterMonth" style="flex:1">
   </div>
   <div id="transactionsList"></div>
 </div>
 
-<!-- BUDGETS -->
 <div id="pageBudgets" class="page">
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div class="card-title" style="margin:0">Presupuestos del mes</div>
-      <button onclick="showAddBudget()" style="background:var(--primary);border:none;color:white;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px">+ AÃ±adir</button>
+      <button onclick="showAddBudget()" style="background:var(--primary);border:none;color:white;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">+ AÃ±adir</button>
     </div>
     <div id="budgetsList"></div>
   </div>
 </div>
 
-<!-- SETTINGS -->
 <div id="pageSettings" class="page">
   <div class="settings-section">
     <h3>CategorÃ­as</h3>
@@ -303,19 +321,17 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
   <div class="settings-section">
     <h3>Datos</h3>
     <div class="setting-row"><span>Exportar datos</span><button class="btn btn-primary" style="width:auto;padding:8px 16px;font-size:13px" onclick="exportData()">CSV</button></div>
-    <div class="setting-row"><span>Importar datos</span><button class="btn btn-primary" style="width:auto;padding:8px 16px;font-size:13px" onclick="document.getElementById('importFile').click()">CSV</button><input type="file" id="importFile" accept=".csv" style="display:none" onchange="importData(event)"></div>
+    <div class="setting-row"><span>Importar datos</span><button class="btn btn-primary" style="width:auto;padding:8px 16px;font-size:13px" onclick="document.getElementById('importFile').click()">CSV</button><input type="file" id="importFile" accept=".csv" style="display:none"></div>
     <div class="setting-row" style="border:none"><span>Eliminar todos los datos</span><button class="btn btn-danger" style="width:auto;padding:8px 16px;font-size:13px" onclick="clearAllData()">Eliminar</button></div>
   </div>
   <div class="settings-section">
     <h3>App</h3>
-    <div class="setting-row" style="border:none"><span>VersiÃ³n</span><span style="color:var(--text2)">1.0</span></div>
+    <div class="setting-row" style="border:none"><span>VersiÃ³n</span><span style="color:var(--text2)">2.0</span></div>
   </div>
 </div>
 
-<!-- FAB -->
 <button class="fab" onclick="showAddTransaction()">+</button>
 
-<!-- Bottom Nav -->
 <nav>
   <button class="active" onclick="navigate('pageDashboard')"><span class="nav-icon">&#9783;</span>Resumen</button>
   <button onclick="navigate('pageTransactions')"><span class="nav-icon">&#9776;</span>Movimientos</button>
@@ -323,11 +339,10 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
   <button onclick="navigate('pageSettings')"><span class="nav-icon">&#9881;</span>Ajustes</button>
 </nav>
 
-<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-content" id="modalContent">
     <div class="modal-header">
-      <h2 id="modalTitle">Nuevo movimiento</h2>
+      <h2 id="modalTitle"></h2>
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div id="modalBody"></div>
@@ -335,12 +350,11 @@ nav button .nav-icon { font-size: 24px; line-height: 1; }
 </div>
 
 <script>
-// ===== STATE =====
 const STORAGE_KEY = 'finanzas_data';
 let state = { transactions: [], categories: [], budgets: [], currentMonth: '' };
-let chartInstance = null;
+let chartCategory = null;
+let chartDaily = null;
 
-// ===== DEFAULT CATEGORIES =====
 const DEFAULT_CATEGORIES = [
   { id: 'salario', name: 'Salario', icon: 'ðŸ’°' },
   { id: 'freelance', name: 'Freelance', icon: 'ðŸ’»' },
@@ -358,7 +372,27 @@ const DEFAULT_CATEGORIES = [
   { id: 'otros_gastos', name: 'Otros gastos', icon: 'ðŸ“‹' }
 ];
 
-// ===== INIT =====
+function formatMoney(n) {
+  return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function showDialog(msg, confirmText, cancelText) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modalOverlay');
+    const content = document.getElementById('modalContent');
+    overlay.classList.add('open', 'dialog');
+    content.innerHTML = `
+      <div class="dialog-msg">${msg}</div>
+      <div class="dialog-btns">
+        ${cancelText ? `<button class="btn btn-secondary" id="dialogCancel">${cancelText}</button>` : ''}
+        <button class="btn btn-primary" id="dialogConfirm">${confirmText || 'OK'}</button>
+      </div>`;
+    document.getElementById('dialogConfirm').onclick = () => { closeModal(); resolve(true); };
+    const cancelBtn = document.getElementById('dialogCancel');
+    if (cancelBtn) cancelBtn.onclick = () => { closeModal(); resolve(false); };
+  });
+}
+
 function init() {
   loadState();
   const now = new Date();
@@ -369,6 +403,7 @@ function init() {
   document.getElementById('filterMonth').addEventListener('change', () => renderTransactions());
   document.getElementById('filterType').addEventListener('change', () => renderTransactions());
   document.getElementById('filterCategory').addEventListener('change', () => renderTransactions());
+  document.getElementById('filterSearch').addEventListener('input', () => renderTransactions());
   document.getElementById('importFile').addEventListener('change', importData);
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -393,7 +428,6 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-// ===== MONTH =====
 function updateMonthLabel() {
   const [y,m] = state.currentMonth.split('-').map(Number);
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -402,23 +436,18 @@ function updateMonthLabel() {
 
 function prevMonth() {
   let [y,m] = state.currentMonth.split('-').map(Number);
-  m--;
-  if (m < 1) { m = 12; y--; }
+  m--; if (m < 1) { m = 12; y--; }
   state.currentMonth = y + '-' + String(m).padStart(2,'0');
-  updateMonthLabel();
-  render();
+  updateMonthLabel(); render();
 }
 
 function nextMonth() {
   let [y,m] = state.currentMonth.split('-').map(Number);
-  m++;
-  if (m > 12) { m = 1; y++; }
+  m++; if (m > 12) { m = 1; y++; }
   state.currentMonth = y + '-' + String(m).padStart(2,'0');
-  updateMonthLabel();
-  render();
+  updateMonthLabel(); render();
 }
 
-// ===== NAVIGATION =====
 function navigate(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const page = document.getElementById(pageId);
@@ -435,11 +464,12 @@ function navigate(pageId) {
   } catch(e) { console.error(e); }
 }
 
-// ===== MODAL =====
 function openModal(title, content) {
+  const overlay = document.getElementById('modalOverlay');
+  overlay.classList.remove('dialog');
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = content;
-  document.getElementById('modalOverlay').classList.add('open');
+  overlay.classList.add('open');
 }
 
 function closeModal() {
@@ -450,11 +480,9 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) closeModal();
 });
 
-// ===== TRANSACTIONS =====
 function showAddTransaction(editId) {
   const t = editId ? state.transactions.find(x => x.id === editId) : null;
   const isEdit = !!t;
-  const title = isEdit ? 'Editar movimiento' : 'Nuevo movimiento';
   const type = t ? t.type : 'expense';
   const amount = t ? t.amount : '';
   const category = t ? t.category : '';
@@ -463,37 +491,24 @@ function showAddTransaction(editId) {
   const catOpts = state.categories.map(c =>
     `<option value="${c.id}" ${category===c.id?'selected':''}>${c.icon||''} ${c.name}</option>`
   ).join('');
-  const html = `
+  openModal(isEdit ? 'Editar movimiento' : 'Nuevo movimiento', `
     <div class="form-group">
       <label>Tipo</label>
       <div class="type-toggle">
-        <button class="type-btn ${type==='expense'?'active expense':''}" data-type="expense" onclick="setTransactionType('expense')">Gasto</button>
-        <button class="type-btn ${type==='income'?'active income':''}" data-type="income" onclick="setTransactionType('income')">Ingreso</button>
+        <button class="type-btn ${type==='expense'?'active expense':''}" data-type="expense" onclick="setTxType('expense')">Gasto</button>
+        <button class="type-btn ${type==='income'?'active income':''}" data-type="income" onclick="setTxType('income')">Ingreso</button>
       </div>
     </div>
-    <div class="form-group">
-      <label>Monto</label>
-      <input type="number" id="txAmount" step="0.01" min="0" placeholder="0.00" value="${amount}" inputmode="decimal">
-    </div>
-    <div class="form-group">
-      <label>CategorÃ­a</label>
-      <select id="txCategory">${catOpts}</select>
-    </div>
-    <div class="form-group">
-      <label>Fecha</label>
-      <input type="date" id="txDate" value="${date}">
-    </div>
-    <div class="form-group">
-      <label>DescripciÃ³n</label>
-      <textarea id="txDescription" placeholder="DescripciÃ³n opcional...">${desc}</textarea>
-    </div>
+    <div class="form-group"><label>Monto</label><input type="number" id="txAmount" step="0.01" min="0" placeholder="0.00" value="${amount}" inputmode="decimal"></div>
+    <div class="form-group"><label>CategorÃ­a</label><select id="txCategory">${catOpts}</select></div>
+    <div class="form-group"><label>Fecha</label><input type="date" id="txDate" value="${date}"></div>
+    <div class="form-group"><label>DescripciÃ³n</label><textarea id="txDescription" placeholder="DescripciÃ³n opcional...">${desc}</textarea></div>
     <button class="btn btn-primary" onclick="saveTransaction('${isEdit?editId:''}')">${isEdit?'Guardar cambios':'AÃ±adir movimiento'}</button>
-  `;
+  `);
   window._txType = type;
-  openModal(title, html);
 }
 
-function setTransactionType(type) {
+function setTxType(type) {
   window._txType = type;
   document.querySelectorAll('.type-btn').forEach(b => {
     b.classList.remove('active','income','expense');
@@ -503,45 +518,37 @@ function setTransactionType(type) {
 
 function saveTransaction(editId) {
   const amount = parseFloat(document.getElementById('txAmount').value);
-  if (!amount || amount <= 0) { alert('Ingresa un monto vÃ¡lido'); return; }
+  if (!amount || amount <= 0) { showDialog('Ingresa un monto vÃ¡lido'); return; }
   const category = document.getElementById('txCategory').value;
   const date = document.getElementById('txDate').value;
   const description = document.getElementById('txDescription').value.trim();
-  const transaction = {
+  const tx = {
     id: editId || Date.now().toString(36) + Math.random().toString(36).slice(2,5),
     type: window._txType || 'expense',
     amount: Math.round(amount * 100) / 100,
-    category,
-    date,
-    description,
+    category, date, description,
     createdAt: editId ? (state.transactions.find(t=>t.id===editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
   };
   if (editId) {
     const idx = state.transactions.findIndex(t => t.id === editId);
-    if (idx !== -1) state.transactions[idx] = transaction;
+    if (idx !== -1) state.transactions[idx] = tx;
   } else {
-    state.transactions.push(transaction);
+    state.transactions.push(tx);
   }
-  saveState();
-  closeModal();
-  render();
-  navigate('pageTransactions');
+  saveState(); closeModal(); render(); navigate('pageTransactions');
 }
 
-function deleteTransaction(id) {
-  if (!confirm('Â¿Eliminar este movimiento?')) return;
+async function deleteTransaction(id) {
+  if (!await showDialog('Â¿Eliminar este movimiento?', 'Eliminar', 'Cancelar')) return;
   state.transactions = state.transactions.filter(t => t.id !== id);
-  saveState();
-  render();
-  const activePage = document.querySelector('.page.active');
-  if (activePage) {
-    const pageId = activePage.id;
-    if (pageId === 'pageTransactions') renderTransactions();
-    else if (pageId === 'pageDashboard') renderDashboard();
+  saveState(); render();
+  const active = document.querySelector('.page.active');
+  if (active) {
+    if (active.id === 'pageTransactions') renderTransactions();
+    else if (active.id === 'pageDashboard') renderDashboard();
   }
 }
 
-// ===== CATEGORIES =====
 function showAddCategory() {
   openModal('Nueva categorÃ­a', `
     <div class="form-group"><label>Nombre</label><input type="text" id="catName" placeholder="Ej: Transporte"></div>
@@ -552,28 +559,44 @@ function showAddCategory() {
 
 function saveCategory() {
   const name = document.getElementById('catName').value.trim();
-  if (!name) { alert('Ingresa un nombre'); return; }
+  if (!name) { showDialog('Ingresa un nombre'); return; }
   const icon = document.getElementById('catIcon').value.trim() || 'ðŸ“‹';
   const id = name.toLowerCase().replace(/[^a-z0-9]/g,'_');
-  if (state.categories.find(c => c.id === id)) { alert('Ya existe esta categorÃ­a'); return; }
+  if (state.categories.find(c => c.id === id)) { showDialog('Ya existe esta categorÃ­a'); return; }
   state.categories.push({ id, name, icon });
-  saveState();
-  closeModal();
-  renderSettings();
-  updateCategoryFilter();
+  saveState(); closeModal(); renderSettings(); updateCategoryFilter();
 }
 
-function deleteCategory(id) {
-  const used = state.transactions.some(t => t.category === id);
-  if (used) { alert('No se puede eliminar: hay movimientos con esta categorÃ­a'); return; }
-  if (!confirm('Â¿Eliminar categorÃ­a?')) return;
+function editCategory(id) {
+  const cat = state.categories.find(c => c.id === id);
+  if (!cat) return;
+  openModal('Editar categorÃ­a', `
+    <div class="form-group"><label>Nombre</label><input type="text" id="catName" value="${cat.name}"></div>
+    <div class="form-group"><label>Icono</label><input type="text" id="catIcon" value="${cat.icon}" maxlength="2"></div>
+    <button class="btn btn-primary" onclick="saveEditCategory('${id}')">Guardar cambios</button>
+  `);
+}
+
+function saveEditCategory(id) {
+  const name = document.getElementById('catName').value.trim();
+  if (!name) { showDialog('Ingresa un nombre'); return; }
+  const icon = document.getElementById('catIcon').value.trim() || 'ðŸ“‹';
+  const cat = state.categories.find(c => c.id === id);
+  if (cat) { cat.name = name; cat.icon = icon; }
+  saveState(); closeModal(); renderSettings(); updateCategoryFilter();
+}
+
+async function deleteCategory(id) {
+  if (state.transactions.some(t => t.category === id)) {
+    await showDialog('No se puede eliminar: hay movimientos con esta categorÃ­a');
+    return;
+  }
+  if (!await showDialog('Â¿Eliminar categorÃ­a?', 'Eliminar', 'Cancelar')) return;
   state.categories = state.categories.filter(c => c.id !== id);
-  saveState();
-  renderSettings();
-  updateCategoryFilter();
+  state.budgets = state.budgets.filter(b => b.category !== id);
+  saveState(); renderSettings(); updateCategoryFilter();
 }
 
-// ===== BUDGETS =====
 function showAddBudget() {
   const catOpts = state.categories.map(c =>
     `<option value="${c.id}">${c.icon||''} ${c.name}</option>`
@@ -585,31 +608,23 @@ function showAddBudget() {
   `);
 }
 
-function saveBudget() {
+async function saveBudget() {
   const category = document.getElementById('budgetCategory').value;
   const amount = parseFloat(document.getElementById('budgetAmount').value);
-  if (!amount || amount <= 0) { alert('Ingresa un monto vÃ¡lido'); return; }
+  if (!amount || amount <= 0) { showDialog('Ingresa un monto vÃ¡lido'); return; }
   if (state.budgets.find(b => b.category === category)) {
-    if (!confirm('Ya hay un presupuesto para esta categorÃ­a. Â¿Reemplazarlo?')) return;
+    if (!await showDialog('Ya hay un presupuesto para esta categorÃ­a. Â¿Reemplazarlo?', 'Reemplazar', 'Cancelar')) return;
     state.budgets = state.budgets.filter(b => b.category !== category);
   }
-  state.budgets.push({
-    id: Date.now().toString(36),
-    category,
-    amount: Math.round(amount * 100) / 100
-  });
-  saveState();
-  closeModal();
-  renderBudgets();
+  state.budgets.push({ id: Date.now().toString(36), category, amount: Math.round(amount * 100) / 100 });
+  saveState(); closeModal(); renderBudgets();
 }
 
 function deleteBudget(id) {
   state.budgets = state.budgets.filter(b => b.id !== id);
-  saveState();
-  renderBudgets();
+  saveState(); renderBudgets();
 }
 
-// ===== EXPORT / IMPORT =====
 function exportData() {
   const rows = [['Tipo','Monto','CategorÃ­a','Fecha','DescripciÃ³n']];
   state.transactions.forEach(t => {
@@ -621,14 +636,14 @@ function exportData() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'finanzas_export.csv'; a.click();
 }
 
-function importData(event) {
+async function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = async (e) => {
     const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());
-    if (lines.length < 2) { alert('Archivo vacÃ­o o invÃ¡lido'); return; }
-    if (!confirm('Â¿Importar datos? Se aÃ±adirÃ¡n a los existentes.')) return;
+    if (lines.length < 2) { showDialog('Archivo vacÃ­o o invÃ¡lido'); return; }
+    if (!await showDialog('Â¿Importar datos? Se aÃ±adirÃ¡n a los existentes.', 'Importar', 'Cancelar')) return;
     const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase());
     let count = 0;
     for (let i = 1; i < lines.length; i++) {
@@ -652,9 +667,8 @@ function importData(event) {
       });
       count++;
     }
-    saveState();
-    render();
-    alert(`Importados ${count} movimientos`);
+    saveState(); render();
+    await showDialog(`Importados ${count} movimientos`);
     event.target.value = '';
   };
   reader.readAsText(file, 'UTF-8');
@@ -672,16 +686,14 @@ function parseCSVLine(line) {
   return result;
 }
 
-function clearAllData() {
-  if (!confirm('Â¿Eliminar TODOS los datos? Esta acciÃ³n no se puede deshacer.')) return;
-  if (!confirm('Â¿EstÃ¡s seguro?')) return;
+async function clearAllData() {
+  if (!await showDialog('Â¿Eliminar TODOS los datos? Esta acciÃ³n no se puede deshacer.', 'Eliminar todo', 'Cancelar')) return;
+  if (!await showDialog('Â¿EstÃ¡s seguro?', 'SÃ­, eliminar', 'No')) return;
   state.transactions = [];
   state.budgets = [];
-  saveState();
-  render();
+  saveState(); render();
 }
 
-// ===== FILTERS =====
 function updateCategoryFilter() {
   const sel = document.getElementById('filterCategory');
   const current = sel.value;
@@ -689,13 +701,25 @@ function updateCategoryFilter() {
     state.categories.map(c => `<option value="${c.id}" ${current===c.id?'selected':''}>${c.icon||''} ${c.name}</option>`).join('');
 }
 
-// ===== RENDER =====
 function render() {
+  renderHeader();
   renderDashboard();
   renderTransactions();
   renderBudgets();
   renderSettings();
   updateCategoryFilter();
+}
+
+function renderHeader() {
+  const month = state.currentMonth;
+  const tx = state.transactions.filter(t => t.date.slice(0,7) === month);
+  const totalInc = tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const totalExp = tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const neto = totalInc - totalExp;
+  const el = document.getElementById('headerBalance');
+  if (tx.length === 0) { el.textContent = ''; return; }
+  el.textContent = (neto >= 0 ? '+' : '') + formatMoney(neto) + ' este mes';
+  el.style.color = neto >= 0 ? 'var(--income)' : 'var(--expense)';
 }
 
 function renderDashboard() {
@@ -704,42 +728,85 @@ function renderDashboard() {
   const totalInc = tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const totalExp = tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const neto = totalInc - totalExp;
-  document.getElementById('balanceNeto').textContent = '$' + neto.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  document.getElementById('totalIncome').textContent = '$' + totalInc.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  document.getElementById('totalExpense').textContent = '$' + totalExp.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  // Recent transactions
-  const recent = tx.sort((a,b) => b.date.localeCompare(a.date) || b.createdAt?.localeCompare(a.createdAt||'')).slice(0,5);
+  document.getElementById('balanceNeto').textContent = formatMoney(neto);
+  document.getElementById('balanceNeto').style.color = neto >= 0 ? 'var(--income)' : 'var(--expense)';
+  document.getElementById('totalIncome').textContent = formatMoney(totalInc);
+  document.getElementById('totalExpense').textContent = formatMoney(totalExp);
+
+  const daysInMonth = new Date(month.split('-')[0], month.split('-')[1], 0).getDate();
+  const day = Math.min(new Date().getDate(), daysInMonth);
+  const avgDaily = day > 0 ? totalExp / day : 0;
+  document.getElementById('avgDaily').textContent = formatMoney(avgDaily);
+  document.getElementById('txCount').textContent = tx.length;
+  const maxExp = tx.filter(t=>t.type==='expense').reduce((max,t) => t.amount > max ? t.amount : max, 0);
+  document.getElementById('biggestExp').textContent = formatMoney(maxExp);
+
+  const recent = [...tx].sort((a,b) => b.date.localeCompare(a.date) || b.createdAt?.localeCompare(a.createdAt||'')).slice(0,5);
   const container = document.getElementById('recentTransactions');
   if (recent.length === 0) {
     container.innerHTML = '<div class="empty-state"><div class="icon">ðŸ“­</div><p>No hay movimientos este mes</p></div>';
   } else {
-    container.innerHTML = recent.map(t => renderTransactionItem(t)).join('');
+    container.innerHTML = recent.map(t => renderTxItem(t)).join('');
   }
 
-  // Chart
+  renderDailyChart(tx);
   renderCategoryChart(tx.filter(t=>t.type==='expense'));
+}
+
+function renderDailyChart(tx) {
+  const canvas = document.getElementById('chartDaily');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (chartDaily) { chartDaily.destroy(); chartDaily = null; }
+  if (tx.length === 0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+
+  const daily = {};
+  tx.forEach(t => {
+    if (!daily[t.date]) daily[t.date] = { income: 0, expense: 0 };
+    daily[t.date][t.type] += t.amount;
+  });
+  const sorted = Object.keys(daily).sort();
+  const labels = sorted.map(d => new Date(d).getDate().toString());
+  const incomes = sorted.map(d => daily[d].income);
+  const expenses = sorted.map(d => daily[d].expense);
+
+  chartDaily = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Ingresos', data: incomes, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4 },
+        { label: 'Gastos', data: expenses, backgroundColor: 'rgba(239,68,68,.7)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: '#334155' }, ticks: { color: '#64748b', font: { size: 10 }, callback: v => '$'+v } }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { color: '#94a3b8', boxWidth: 12, padding: 8, font: { size: 11 } } }
+      }
+    }
+  });
 }
 
 function renderCategoryChart(expenses) {
   const canvas = document.getElementById('chartCategory');
   const ctx = canvas.getContext('2d');
-  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-  if (expenses.length === 0) {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    return;
-  }
+  if (chartCategory) { chartCategory.destroy(); chartCategory = null; }
+  if (expenses.length === 0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
   const grouped = {};
-  expenses.forEach(t => {
-    grouped[t.category] = (grouped[t.category]||0) + t.amount;
-  });
+  expenses.forEach(t => { grouped[t.category] = (grouped[t.category]||0) + t.amount; });
   const labels = Object.keys(grouped).map(id => {
     const cat = state.categories.find(c => c.id === id);
     return cat ? (cat.icon||'')+' '+cat.name : id;
   });
   const data = Object.values(grouped);
   const colors = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#06b6d4','#d946ef','#e11d48','#0ea5e9'];
-  chartInstance = new Chart(ctx, {
+  chartCategory = new Chart(ctx, {
     type: 'doughnut',
     data: { labels, datasets: [{ data, backgroundColor: colors.slice(0,labels.length), borderWidth: 0 }] },
     options: {
@@ -751,7 +818,7 @@ function renderCategoryChart(expenses) {
   });
 }
 
-function renderTransactionItem(t) {
+function renderTxItem(t) {
   const cat = state.categories.find(c => c.id === t.category);
   const icon = cat ? cat.icon : 'ðŸ“‹';
   const catName = cat ? cat.name : t.category;
@@ -765,7 +832,7 @@ function renderTransactionItem(t) {
         <div class="desc">${desc}</div>
         <div class="date">${date}</div>
       </div>
-      <div class="transaction-amount ${t.type}">$${t.amount.toFixed(2)}</div>
+      <div class="transaction-amount ${t.type}">${formatMoney(t.amount)}</div>
       <div class="transaction-actions">
         <button onclick="showAddTransaction('${t.id}')" title="Editar">&#9998;</button>
         <button onclick="deleteTransaction('${t.id}')" title="Eliminar">&#10005;</button>
@@ -777,15 +844,20 @@ function renderTransactions() {
   const type = document.getElementById('filterType').value;
   const cat = document.getElementById('filterCategory').value;
   const month = document.getElementById('filterMonth').value || state.currentMonth;
+  const search = document.getElementById('filterSearch').value.toLowerCase().trim();
   let filtered = state.transactions.filter(t => t.date.slice(0,7) === month);
   if (type !== 'all') filtered = filtered.filter(t => t.type === type);
   if (cat !== 'all') filtered = filtered.filter(t => t.category === cat);
+  if (search) filtered = filtered.filter(t =>
+    t.description.toLowerCase().includes(search) ||
+    (state.categories.find(c=>c.id===t.category)?.name||'').toLowerCase().includes(search)
+  );
   filtered.sort((a,b) => b.date.localeCompare(a.date) || b.createdAt?.localeCompare(a.createdAt||''));
   const container = document.getElementById('transactionsList');
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">ðŸ“­</div><p>No hay movimientos</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon">ðŸ”</div><p>No hay movimientos que coincidan</p></div>';
   } else {
-    container.innerHTML = filtered.map(t => renderTransactionItem(t)).join('');
+    container.innerHTML = filtered.map(t => renderTxItem(t)).join('');
   }
 }
 
@@ -793,7 +865,7 @@ function renderBudgets() {
   const month = state.currentMonth;
   const container = document.getElementById('budgetsList');
   if (state.budgets.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">ðŸŽ¯</div><p>No hay presupuestos. AÃ±ade uno para controlar tus gastos.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon">ðŸŽ¯</div><p>No hay presupuestos. AÃ±ade uno para controlar tus gastos mensuales.</p></div>';
     return;
   }
   const expenses = state.transactions.filter(t => t.type==='expense' && t.date.slice(0,7)===month);
@@ -809,12 +881,12 @@ function renderBudgets() {
       <div class="budget-item">
         <div style="flex:1">
           <div style="display:flex;justify-content:space-between">
-            <span>${catName}</span>
-            <span style="font-size:13px;font-weight:600">$${spent.toFixed(2)} / $${b.amount.toFixed(2)}</span>
+            <span style="font-size:14px;font-weight:600">${catName}</span>
+            <span style="font-size:13px;font-weight:600">${formatMoney(spent)} / ${formatMoney(b.amount)}</span>
           </div>
           <div class="budget-progress">
             <div class="bar"><div class="bar-fill ${barClass}" style="width:${pct}%"></div></div>
-            <div class="budget-info">${pct.toFixed(0)}% usado ${spent > b.amount ? '&#9888; Excedido!' : ''}</div>
+            <div class="budget-info">${pct.toFixed(0)}% usado${spent > b.amount ? ' &#9888; Excedido!' : ''}</div>
           </div>
         </div>
         <div class="category-actions">
@@ -830,13 +902,13 @@ function renderSettings() {
     <div class="category-item">
       <div class="category-name"><span>${c.icon||'ðŸ“‹'}</span> ${c.name}</div>
       <div class="category-actions">
+        <button onclick="editCategory('${c.id}')" title="Editar">&#9998;</button>
         <button onclick="deleteCategory('${c.id}')" title="Eliminar">&#10005;</button>
       </div>
     </div>
   `).join('');
 }
 
-// ===== START =====
 init();
 </script>
 </body>
